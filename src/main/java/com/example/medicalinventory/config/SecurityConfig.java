@@ -39,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // User management - ADMIN only
-                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**")
+                        .hasRole("ADMIN")
 
                         // Medicine APIs
                         .requestMatchers(HttpMethod.GET, "/api/medicines/**")
@@ -68,6 +69,14 @@ public class SecurityConfig {
 
                         // Current stock - ADMIN and USER
                         .requestMatchers(HttpMethod.GET, "/api/stock/**")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        // Analytics - ADMIN and USER
+                        .requestMatchers(HttpMethod.GET, "/api/analytics/**")
+                        .hasAnyRole("ADMIN", "USER")
+
+                        // Reports - ADMIN and USER
+                        .requestMatchers(HttpMethod.GET, "/api/reports/**")
                         .hasAnyRole("ADMIN", "USER")
 
                         // Everything else requires authentication
