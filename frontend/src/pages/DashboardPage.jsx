@@ -55,20 +55,21 @@ export const DashboardPage = () => {
   const fetchAllDashboardData = async () => {
     setLoading(true);
     try {
-      const [dashStats, meds, sups, pos, usrs] = await Promise.all([
+      const results = await Promise.allSettled([
         DashboardService.getStats(),
         MedicineService.getAll(),
         SupplierService.getAll(),
         SupplierService.getPurchaseOrders(),
         UserService.getUsers()
       ]);
-      setStats(dashStats);
-      setMedicines(meds);
-      setSuppliers(sups);
-      setPurchaseOrders(pos);
-      setUsersList(usrs);
+
+      if (results[0].status === 'fulfilled' && results[0].value) setStats(results[0].value);
+      if (results[1].status === 'fulfilled' && Array.isArray(results[1].value)) setMedicines(results[1].value);
+      if (results[2].status === 'fulfilled' && Array.isArray(results[2].value)) setSuppliers(results[2].value);
+      if (results[3].status === 'fulfilled' && Array.isArray(results[3].value)) setPurchaseOrders(results[3].value);
+      if (results[4].status === 'fulfilled' && Array.isArray(results[4].value)) setUsersList(results[4].value);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching dashboard data:', err);
     } finally {
       setLoading(false);
     }

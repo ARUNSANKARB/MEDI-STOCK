@@ -78,11 +78,16 @@ export const UsersPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [uList, rList, aList] = await Promise.all([
+      const results = await Promise.allSettled([
         UserService.getUsers(),
         UserService.getRoles(),
         UserService.getAuditLogs()
       ]);
+
+      const uList = results[0].status === 'fulfilled' && Array.isArray(results[0].value) ? results[0].value : [];
+      const rList = results[1].status === 'fulfilled' && Array.isArray(results[1].value) ? results[1].value : [];
+      const aList = results[2].status === 'fulfilled' && Array.isArray(results[2].value) ? results[2].value : [];
+
       setUsers(uList);
       setRoles(rList);
       if (!selectedRole && rList.length > 0) {

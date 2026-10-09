@@ -55,11 +55,16 @@ export const AlertsPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [alertData, adjList, medList] = await Promise.all([
+      const results = await Promise.allSettled([
         StockMonitoringService.getAlerts(),
         StockMonitoringService.getAdjustments(),
         MedicineService.getAll()
       ]);
+
+      const alertData = results[0].status === 'fulfilled' && results[0].value ? results[0].value : { outOfStock: [], lowStock: [], expiringSoon: [], expired: [] };
+      const adjList = results[1].status === 'fulfilled' && Array.isArray(results[1].value) ? results[1].value : [];
+      const medList = results[2].status === 'fulfilled' && Array.isArray(results[2].value) ? results[2].value : [];
+
       setAlerts(alertData);
       setAdjustments(adjList);
       setMedicines(medList);

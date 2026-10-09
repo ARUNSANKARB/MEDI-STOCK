@@ -68,11 +68,16 @@ export const SuppliersPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [supList, poList, medList] = await Promise.all([
+      const results = await Promise.allSettled([
         SupplierService.getAll(),
         SupplierService.getPurchaseOrders(),
         MedicineService.getAll()
       ]);
+
+      const supList = results[0].status === 'fulfilled' && Array.isArray(results[0].value) ? results[0].value : [];
+      const poList = results[1].status === 'fulfilled' && Array.isArray(results[1].value) ? results[1].value : [];
+      const medList = results[2].status === 'fulfilled' && Array.isArray(results[2].value) ? results[2].value : [];
+
       setSuppliers(supList);
       setPurchaseOrders(poList);
       setMedicines(medList);

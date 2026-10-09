@@ -73,7 +73,7 @@ export const InventoryPage = () => {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [meds, cats, sups] = await Promise.all([
+      const results = await Promise.allSettled([
         MedicineService.getAll({
           search: searchTerm,
           categoryId: categoryFilter,
@@ -83,6 +83,11 @@ export const InventoryPage = () => {
         MedicineService.getCategories(),
         SupplierService.getAll()
       ]);
+
+      const meds = results[0].status === 'fulfilled' && Array.isArray(results[0].value) ? results[0].value : [];
+      const cats = results[1].status === 'fulfilled' && Array.isArray(results[1].value) ? results[1].value : [];
+      const sups = results[2].status === 'fulfilled' && Array.isArray(results[2].value) ? results[2].value : [];
+
       setMedicines(meds);
       setCategories(cats);
       setSuppliers(sups);
