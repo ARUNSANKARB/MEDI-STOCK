@@ -1,1 +1,1 @@
-"# MEDI-STOCK" 
+# MEDI-STOCK 
