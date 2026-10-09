@@ -22,4 +22,5 @@ EXPOSE 8080
 
 ENV PORT=8080
 
-ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+# Explicitly limit heap memory to 350m to prevent Render 512MB RAM OOM kill
+ENTRYPOINT ["java", "-Xms128m", "-Xmx350m", "-XX:+UseContainerSupport", "-XX:+ExitOnOutOfMemoryError", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
