@@ -1,11 +1,15 @@
 import axios from "axios";
 
 const getApiBaseUrl = () => {
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
+  const envUrl = (typeof import.meta !== 'undefined' && import.meta.env) 
+    ? (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL) 
+    : null;
+  if (envUrl) {
+    return envUrl.endsWith('/api/v1') ? envUrl : `${envUrl.replace(/\/$/, '')}/api/v1`;
   }
   if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE_URL) {
-    return process.env.REACT_APP_API_BASE_URL;
+    const pUrl = process.env.REACT_APP_API_BASE_URL;
+    return pUrl.endsWith('/api/v1') ? pUrl : `${pUrl.replace(/\/$/, '')}/api/v1`;
   }
   return '/api/v1';
 };
